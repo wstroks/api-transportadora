@@ -62,7 +62,7 @@ class EmpresaController {
         nome: 'required|min:5',
         cnpj: 'required|min:5',
         estado: 'required',
-        cidade:'required',
+        cidade: 'required',
         cep: 'required|min:6',
         endereco: 'required:min:7'
 
@@ -73,7 +73,7 @@ class EmpresaController {
       }
 
 
-      const data = request.only(['nome', 'cnpj', 'estado','cidade', 'cep', 'endereco']);
+      const data = request.only(['nome', 'cnpj', 'estado', 'cidade', 'cep', 'endereco']);
       const empresa = await Empresa.create({ ...data, users_id: auth.user.id });
 
       return response.status(200).json({ message: "Cadastro de sua empresa realizado com sucesso!", empresa: empresa });
@@ -115,7 +115,28 @@ class EmpresaController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit({ params, request, response, view }) {
+  async edit({ params, request, response, view, auth }) {
+
+    try {
+      const data = request.all();
+      const empresa = await Empresa.query().where('users_id', '=', auth.user.id).first();
+      if (!empresa) {
+        return response.status(404).send({ message: "Nenhum registro encontrado" });
+      }
+
+      empresa.nome = data.nome;
+      empresa.endereco = data.endereco;
+      empresa.cep = data.cep;
+      empresa.cnpj = data.cnpj;
+      empresa.cidade = data.cidade;
+
+      empresa.save();
+
+      return response.status(200).json({message: "Edição feita com sucesso!", empresa: empresa});;
+    }
+    catch (err) {
+      return response.status(500).send({ error: `Erro ${err.message}` })
+    }
   }
 
   /**
@@ -137,7 +158,22 @@ class EmpresaController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {
+  async destroy({ params, request, response,auth }) {
+
+    try {
+     
+      const empresa = await Empresa.query().where('users_id', '=', auth.user.id).first();
+      if (!empresa) {
+        return response.status(404).send({ message: "Nenhum registro encontrado" });
+      }
+
+      empresa.delete();
+
+      return response.status(200).json({message: "Exclução feita com sucesso!", empresa: empresa});;
+    }
+    catch (err) {
+      return response.status(500).send({ error: `Erro ${err.message}` })
+    }
   }
 }
 

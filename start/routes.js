@@ -32,6 +32,8 @@ Route.group(() => {
 
   Route.post('','EmpresaController.create');
   Route.get('','EmpresaController.index');
+  Route.delete('','EmpresaController.destroy');
+  Route.post('editar','EmpresaController.edit');
   
 }).prefix('empresa').middleware('auth');
 
