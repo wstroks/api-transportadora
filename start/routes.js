@@ -28,3 +28,10 @@ Route.get('/lagout','UserController.lagout');
 
 Route.post('/empresa','EmpresaController.create').middleware('auth');
 
+Route.group(() => {
+
+  Route.post('','EmpresaController.create');
+  Route.get('','EmpresaController.index');
+  
+}).prefix('empresa').middleware('auth');
+

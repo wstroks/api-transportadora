@@ -18,7 +18,18 @@ class EmpresaController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, view }) {
+  async index({ request, response, view, auth }) {
+    try {
+      const empresa = await Empresa.query().where('users_id', '=', auth.user.id).first();
+      if (!empresa) {
+        return response.status(404).send({ message: "Nenhum registro encontrado" });
+      }
+
+      return empresa;
+    }
+    catch (err) {
+      return response.status(500).send({ error: `Erro ${err.message}` })
+    }
   }
 
   /**
@@ -30,9 +41,9 @@ class EmpresaController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create({ request, response, view, auth,params }) {
+  async create({ request, response, view, auth, params }) {
     try {
-     
+
       const { id } = auth.user.id;
       //console.log(id+"x");
       const erroMessage = {
@@ -43,13 +54,15 @@ class EmpresaController {
         'cep.min': 'Tamanho do cep tem que ser no minímo 6',
         'cep.required': 'Campo cep é obrigatório',
         'endereco.min': 'Tamanho do endereço tem que ser no minímo 7',
-        'endereco.required': 'Campo endereço é obrigatório'
+        'endereco.required': 'Campo endereço é obrigatório',
+        'cidade.required': 'Campo cidade é obrigatório'
 
       }
       const validation = await validateAll(request.all(), {
         nome: 'required|min:5',
         cnpj: 'required|min:5',
         estado: 'required',
+        cidade:'required',
         cep: 'required|min:6',
         endereco: 'required:min:7'
 
@@ -58,9 +71,9 @@ class EmpresaController {
       if (validation.fails()) {
         return response.status(401).send({ message: validation.messages() });
       }
-      
-      
-      const data = request.only(['nome', 'cnpj', 'estado', 'cep', 'endereco']);
+
+
+      const data = request.only(['nome', 'cnpj', 'estado','cidade', 'cep', 'endereco']);
       const empresa = await Empresa.create({ ...data, users_id: auth.user.id });
 
       return response.status(200).json({ message: "Cadastro de sua empresa realizado com sucesso!", empresa: empresa });
