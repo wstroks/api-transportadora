@@ -6,7 +6,10 @@ const Model = use('Model')
 class Empresa extends Model {
 
     users() {
-        return this.belongsTo('App/Models/User')
+        return this.hasMany('App/Models/User')
+    }
+    agregados(){
+        return this.hasMany('App/Models/Agregado')
     }
 
 }
