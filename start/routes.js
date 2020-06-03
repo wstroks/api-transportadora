@@ -24,6 +24,7 @@ Route.get('/', () => {
 Route.post('/login','UserController.login').middleware('guest');
 Route.post('/registro','UserController.create');
 Route.get('/lagout','UserController.lagout');
+Route.get('/email','UserController.email');
 
 
 Route.post('/empresa','EmpresaController.create').middleware('auth');
@@ -37,3 +38,27 @@ Route.group(() => {
   
 }).prefix('empresa').middleware('auth');
 
+
+
+Route.group(() => {
+
+  Route.post('','BoletoController.store');
+  Route.get('','BoletoController.index');
+  Route.post('editar/:id','BoletoController.edit'); //tirar edit
+  Route.get('show/:id','BoletoController.show'); // tirar show
+  Route.delete(':id','BoletoController.destroy');
+  
+  
+}).prefix('boletos').middleware('auth');
+
+
+Route.group(() => {
+
+  Route.post('','AgregadoController.store');
+  Route.get('','AgregadoController.index');
+  Route.post(':id','AgregadoController.edit');
+  Route.get(':id','AgregadoController.show');
+  Route.delete(':id','AgregadoController.destroy');
+  
+  
+}).prefix('agregados').middleware('auth');

@@ -1,6 +1,8 @@
 'use strict'
 
 const User = use('App/Models/User');
+const Mail = use('Mail');
+const Smser = use('Smser');
 const { validateAll } = use('Validator');
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -74,6 +76,16 @@ class UserController {
             return response.status(500).send({ error: `Erro ${err.message}` });
         }
 
+    }
+
+    async email({ response, auth, request,view }){
+        /*await Mail.send('', {}, (message) => {
+            message.to('wstroks@gmail.com')
+            message.subject('Sending emails with Adonis is easy!')
+          })*/
+
+          await Smser.send('Eu sou a LEnDA', '+5575992320376')
+        
     }
 
 
